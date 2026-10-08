@@ -4,7 +4,9 @@
 const express = require('express')
 const cors = require ('cors')
 const dotenv = require('dotenv')
-dotenv.config()
+
+const path = require('path');
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 
@@ -16,126 +18,110 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}));
 
 // create
-app.post('/insert', (request, response) => {
-    console.log("app: insert a row.");
-    // console.log(request.body); 
-
-    const {name} = request.body;
+app.post('/api/users/register', (request, response) => {
+    const {firstName, lastName, email, password} = request.body;
     const db = dbService.getDbServiceInstance();
 
-    const result = db.insertNewName(name);
- 
-    // note that result is a promise
-    result 
-    .then(data => response.json({data: data})) // return the newly added row to frontend, which will show it
-   // .then(data => console.log({data: data})) // debug first before return by response
-   .catch(err => console.log(err));
-});
-
-
-
-
-// read 
-app.get('/getAll', (request, response) => {
-    
-    const db = dbService.getDbServiceInstance();
-
-    
-    const result =  db.getAllData(); // call a DB function
+    const result = db.registerUser({ firstName, lastName, email, password });
 
     result
-    .then(data => response.json({data: data}))
-    .catch(err => console.log(err));
+      .then(data => response.json({ success: true, data }))
+      .catch(err => response.status(500).json({ success: false, error: err.message }));
 });
 
-
-app.get('/search/:name', (request, response) => { // we can debug by URL
-    
-    const {name} = request.params;
-    
-    console.log(name);
-
+app.post('/api/users/signin', (request, response) => {
+    const {email, password} = request.body;
     const db = dbService.getDbServiceInstance();
 
-    let result;
-    if(name === "all") // in case we want to search all
-       result = db.getAllData()
-    else 
-       result =  db.searchByName(name); // call a DB function
+    const result = db.signInUser({email, password});
 
     result
-    .then(data => response.json({data: data}))
-    .catch(err => console.log(err));
+     .then(data => response.json(data))
+     .catch(err => response.status(500).json({ success: false, error: err.message }));
 });
 
-
-// update
-app.patch('/update', 
-     (request, response) => {
-          console.log("app: update is called");
-          //console.log(request.body);
-          const{id, name} = request.body;
-          console.log(id);
-          console.log(name);
-          const db = dbService.getDbServiceInstance();
-
-          const result = db.updateNameById(id, name);
-
-          result.then(data => response.json({success: true}))
-          .catch(err => console.log(err)); 
-
-     }
-);
-
-// delete service
-app.delete('/delete/:id', 
-     (request, response) => {     
-        const {id} = request.params;
-        console.log("delete");
-        console.log(id);
-        const db = dbService.getDbServiceInstance();
-
-        const result = db.deleteRowById(id);
-
-        result.then(data => response.json({success: true}))
-        .catch(err => console.log(err));
-     }
-)   
-
-// debug function, will be deleted later
-app.post('/debug', (request, response) => {
-    // console.log(request.body); 
-
-    const {debug} = request.body;
-    console.log(debug);
-
-    return response.json({success: true});
-});   
-
-// debug function: use http://localhost:5050/testdb to try a DB function
-// should be deleted finally
-app.get('/testdb', (request, response) => {
-    
+app.get('/api/users/search/name', (request, response) => {
+    const {firstName, lastName} = request.query;
     const db = dbService.getDbServiceInstance();
 
-    
-    const result =  db.deleteById("14"); // call a DB function here, change it to the one you want
+    const result = db.searchUsersByName({ firstName, lastName });
 
     result
-    .then(data => response.json({data: data}))
-    .catch(err => console.log(err));
+    .then(data => response.json({ data }))
+    .catch(err => response.status(500).json({ error: err.message }));
+})
+
+
+app.get('/api/users/search/id/:id', (request, response) => {
+    const { id } = request.params;
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.searchUserById(id);
+
+    result
+        .then(data => response.json({ data: data }))
+        .catch(err => response.status(500).json({ error: err.message }));
 });
 
+app.get('/api/users/search/salary', (request, response) => {
+    const { min, max } = request.query;
+    const db = dbService.getDbServiceInstance();
 
-// set up the web server listener
-// if we use .env to configure
-/*
-app.listen(process.env.PORT, 
-    () => {
-        console.log("I am listening on the configured port " + process.env.PORT)
-    }
-);
-*/
+    const result = db.searchUsersBySalaryRange(min, max);
+    result
+        .then(data => response.json({ data }))
+        .catch(err => response.status(500).json({ error: err.message }));
+});
+
+// 6. Search users whose ages are between X and Y
+app.get('/api/users/search/age', (request, response) => {
+    const { min, max } = request.query;
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.searchUsersByAgeRange(min, max);
+    result
+        .then(data => response.json({ data }))
+        .catch(err => response.status(500).json({ error: err.message }));
+});
+
+app.get('/api/users/search/registered-after/:userid', (request, response) => {
+    const { userid } = request.params;
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.searchUsersRegisteredAfter(userid);
+    result
+        .then(data => response.json({ data }))
+        .catch(err => response.status(500).json({ error: err.message }));
+});
+
+// 8. Search users who never signed in
+app.get('/api/users/search/never-signed-in', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.searchUsersNeverSignedIn();
+    result
+        .then(data => response.json({ data }))
+        .catch(err => response.status(500).json({ error: err.message }));
+});
+
+app.get('/api/users/search/same-day/:userid', (request, response) => {
+    const { userid } = request.params;
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.searchUsersRegisteredOnSameDay(userid);
+    result
+        .then(data => response.json({ data }))
+        .catch(err => response.status(500).json({ error: err.message }));
+});
+
+app.get('/api/users/search/registered-today', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.searchUsersRegisteredToday();
+    result
+        .then(data => response.json({ data }))
+        .catch(err => response.status(500).json({ error: err.message }));
+});
 
 // if we configure here directly
 app.listen(5050, 
