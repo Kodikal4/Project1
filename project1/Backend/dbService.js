@@ -1,6 +1,7 @@
 // database services, accessbile by DbService methods.
 
 const mysql = require('mysql');
+const bcrypt = require('bcrypt'); 
 const dotenv = require('dotenv');
 dotenv.config(); // read from .env file
 
