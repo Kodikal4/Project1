@@ -8,6 +8,141 @@
 </head>
 <body>
   <main>
+
+<h2>User Registration</h2>
+
+<form id="register-form">
+    <label>User ID:</label>
+    <input type="text" id="userid" required>
+
+    <label>First Name:</label>
+    <input type="text" id="first-name" required>
+
+    <label>Last Name:</label>
+    <input type="text" id="last-name" required>
+
+    <label>Password:</label>
+    <input type="password" id="password" required>
+
+    <label>Age:</label>
+    <input type="number" id="age" min="0" required>
+
+    <label>Salary:</label>
+    <input type="number" id="salary" min="0" step="0.01" required>
+
+    <button type="submit">Register</button>
+</form>
+
+<p id="register-message"></p>
+<hr>
+
+<h2>User Sign-In</h2>
+
+<form id="login-form">
+    <label>User ID:</label>
+    <input type="text" id="login-userid" required>
+
+    <label>Password:</label>
+    <input type="password" id="login-password" required>
+
+    <button type="submit">Sign In</button>
+</form>
+
+<p id="login-message"></p>
+<hr>
+
+
+<h2>Search Users</h2>
+
+<h3>Search by Name</h3>
+<form id="search-name-form">
+    <label>First Name:</label>
+    <input type="text" id="search-first-name">
+
+    <label>Last Name:</label>
+    <input type="text" id="search-last-name">
+
+    <button type="submit">Search by Name</button>
+</form>
+
+<h3>Search by User ID</h3>
+<form id="search-userid-form">
+    <label>User ID:</label>
+    <input type="text" id="search-userid" required>
+
+    <button type="submit">Search by ID</button>
+</form>
+
+<p id="search-message"></p>
+<hr>
+
+<h3>Search by Salary Range</h3>
+
+<form id="search-salary-form">
+    <label>Minimum Salary:</label>
+    <input type="number" id="min-salary"
+           min="0" step="0.01" required>
+
+    <label>Maximum Salary:</label>
+    <input type="number" id="max-salary"
+           min="0" step="0.01" required>
+
+    <button type="submit">Search by Salary</button>
+</form>
+
+<hr>
+
+<h3>Search by Age Range</h3>
+
+<form id="search-age-form">
+    <label>Minimum Age:</label>
+    <input type="number" id="min-age"
+           min="0" required>
+
+    <label>Maximum Age:</label>
+    <input type="number" id="max-age"
+           min="0" required>
+
+    <button type="submit">Search by Age</button>
+</form>
+
+<hr>
+
+<h3>Users Registered After Another User</h3>
+<form id="search-after-form">
+    <label>User ID:</label>
+    <input type="text" id="after-userid"
+           value="john" required>
+    <button type="submit">Search Registered After</button>
+</form>
+
+<hr>
+
+<h3>Users Registered on the Same Day</h3>
+<form id="search-same-day-form">
+    <label>User ID:</label>
+    <input type="text" id="same-day-userid"
+           value="john" required>
+    <button type="submit">Search Same Day</button>
+</form>
+
+<hr>
+
+<h3>Users Who Never Signed In</h3>
+<button type="button" id="never-signed-in-btn">
+    Search Never Signed In
+</button>
+
+<hr>
+
+<h3>Users Registered Today</h3>
+<button type="button" id="registered-today-btn">
+    Search Registered Today
+</button>
+
+<hr>
+
+
       <label>Name:</label>
       <input type="text" id="name-input">
       <button id="add-name-btn">Add Name</button>
