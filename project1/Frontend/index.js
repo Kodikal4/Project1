@@ -290,3 +290,203 @@ function loadHTMLTable(data){
 
     table.innerHTML = tableHtml;
 }
+
+
+/* USER REGISTRATION */
+
+const registerForm = document.getElementById("register-form");
+const registerMessage = document.getElementById("register-message");
+
+registerForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const user = {
+        userid: document.getElementById("userid").value.trim(),
+        firstName: document.getElementById("first-name").value.trim(),
+        lastName: document.getElementById("last-name").value.trim(),
+        password: document.getElementById("password").value,
+        age: Number(document.getElementById("age").value),
+        salary: Number(document.getElementById("salary").value)
+    };
+
+    if (!user.userid || !user.firstName ||
+        !user.lastName || !user.password) {
+        registerMessage.textContent =
+            "Please fill in all required fields.";
+        return;
+    }
+
+    registerMessage.textContent =
+        "Registration form validated. Backend connection pending.";
+
+    console.log("Registration form validated.");
+});
+
+
+/* USER SIGN-IN */
+
+const loginForm = document.getElementById("login-form");
+const loginMessage = document.getElementById("login-message");
+
+loginForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const userId = document.getElementById("login-userid").value.trim();
+    const password = document.getElementById("login-password").value;
+
+    if (!userId || !password) {
+        loginMessage.textContent =
+            "Please enter your User ID and Password.";
+        return;
+    }
+
+    loginMessage.textContent =
+        "Sign-in form validated. Backend connection pending.";
+
+    console.log("Sign-in form validated.");
+});
+
+
+/* SEARCH BY FIRST NAME AND LAST NAME */
+
+const searchNameForm = document.getElementById("search-name-form");
+const searchMessage = document.getElementById("search-message");
+
+searchNameForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const firstName = document.getElementById("search-first-name").value.trim();
+    const lastName = document.getElementById("search-last-name").value.trim();
+
+    if (!firstName && !lastName) {
+        searchMessage.textContent =
+            "Please enter a first name or last name.";
+        return;
+    }
+
+    searchMessage.textContent =
+        "Name search validated. Backend connection pending.";
+});
+
+/* SEARCH BY USER ID */
+
+const searchUserIdForm = document.getElementById("search-userid-form");
+
+searchUserIdForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const userId = document.getElementById("search-userid").value.trim();
+
+    if (!userId) {
+        searchMessage.textContent =
+            "Please enter a User ID.";
+        return;
+    }
+
+    searchMessage.textContent =
+        "User ID search validated. Backend connection pending.";
+});
+
+
+/* SEARCH BY SALARY RANGE */
+
+const salaryForm = document.getElementById("search-salary-form");
+
+salaryForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const minSalary = Number(
+        document.getElementById("min-salary").value
+    );
+
+    const maxSalary = Number(
+        document.getElementById("max-salary").value
+    );
+
+    if (minSalary > maxSalary) {
+        alert("Minimum salary cannot be greater than maximum salary.");
+        return;
+    }
+
+    alert("Salary range validated. Backend connection pending.");
+});
+
+
+/* SEARCH BY AGE RANGE */
+
+const ageForm = document.getElementById("search-age-form");
+
+ageForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const minAge = Number(
+        document.getElementById("min-age").value
+    );
+
+    const maxAge = Number(
+        document.getElementById("max-age").value
+    );
+
+    if (minAge > maxAge) {
+        alert("Minimum age cannot be greater than maximum age.");
+        return;
+    }
+
+    alert("Age range validated. Backend connection pending.");
+});
+
+
+/* USERS REGISTERED AFTER ANOTHER USER */
+
+const afterForm = document.getElementById("search-after-form");
+
+afterForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const userId = document.getElementById("after-userid").value.trim();
+
+    if (!userId) {
+        alert("Please enter a User ID.");
+        return;
+    }
+
+    alert("Registered-after search validated for: " +
+          userId + ". Backend connection pending.");
+});
+
+
+/* USERS REGISTERED ON THE SAME DAY */
+
+const sameDayForm = document.getElementById("search-same-day-form");
+
+sameDayForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const userId = document.getElementById("same-day-userid").value.trim();
+
+    if (!userId) {
+        alert("Please enter a User ID.");
+        return;
+    }
+
+    alert("Same-day search validated for: " +
+          userId + ". Backend connection pending.");
+});
+
+
+/* USERS WHO NEVER SIGNED IN */
+
+const neverSignedInBtn = document.getElementById("never-signed-in-btn");
+
+neverSignedInBtn.addEventListener("click", function() {
+    alert("Never-signed-in search selected. Backend connection pending.");
+});
+
+
+/* USERS REGISTERED TODAY */
+
+const registeredTodayBtn = document.getElementById("registered-today-btn");
+
+registeredTodayBtn.addEventListener("click", function() {
+    alert("Registered-today search selected. Backend connection pending.");
+});
