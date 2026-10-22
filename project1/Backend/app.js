@@ -17,16 +17,15 @@ app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({extended: false}));
 
-// create
 app.post('/api/users/register', (request, response) => {
-    const {firstName, lastName, email, password} = request.body;
+    const { userid, firstName, lastName, password, age, salary } = request.body;
     const db = dbService.getDbServiceInstance();
 
-    const result = db.registerUser({ firstName, lastName, email, password });
+    const result = db.registerUser({ userid, firstName, lastName, password, age, salary });
 
     result
       .then(data => response.json({ success: true, data }))
-      .catch(err => response.status(500).json({ success: false, error: err.message }));
+      .catch(err => response.status(500).json({ success: false, message: err.message }));
 });
 
 app.post('/api/users/signin', (request, response) => {
@@ -44,8 +43,7 @@ app.get('/api/users/search/name', (request, response) => {
     const {firstName, lastName} = request.query;
     const db = dbService.getDbServiceInstance();
 
-    const result = db.searchUsersByName({ firstName, lastName });
-
+    const result = db.searchUsersByName(firstName, lastName);
     result
     .then(data => response.json({ data }))
     .catch(err => response.status(500).json({ error: err.message }));

@@ -4,8 +4,10 @@ const mysql = require('mysql');
 const bcrypt = require('bcrypt'); 
 const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-let instance = null; 
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+let instance = null;
 
 
 // if you use .env to configure
@@ -88,28 +90,27 @@ class DbService{
    to work with the asynchronous nature of the connection.query method, allowing 
    the function to pause until the query is completed.
    */
-   async registerUser(userData) {
-      const { firstName, lastName, email, password, salary = 0, age = 0 } = userData;
-      try {
-         const saltRounds = 10;
-         const passwordHash = await bcrypt.hash(password, saltRounds);
+   async registerUser({ userid, firstName, lastName, password, age, salary }) {
+        try {
+            // Fallback: create a unique email using userid or timestamp if none provided
+            const generatedEmail = `${firstName.toLowerCase() || 'user'}${userid}@example.com`;
 
-         const insertId = await new Promise((resolve, reject) => {
-               const query = "INSERT INTO users (first_name, last_name, email, password_hash, salary, age) VALUES (?, ?, ?, ?, ?, ?);";
-               connection.query(query, [firstName, lastName, email, passwordHash, salary, age], (err, result) => {
-                  if(err) reject(new Error(err.message));
-                  else resolve(result.insertId);
-               });
-         });
+            const insertId = await new Promise((resolve, reject) => {
+                const query = "INSERT INTO users (userid, first_name, last_name, email, password_hash, age, salary, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW());";
 
-         return { userid: insertId, firstName, lastName, email, salary, age };
-      } catch(error) {
-         console.log(error);
-         throw error;
-      }
-   }
+                connection.query(query, [userid, firstName, lastName, generatedEmail, password, age, salary], (err, result) => {
+                    if (err) reject(err);
+                    else resolve(result.insertId);
+                });
+            });
 
-   async signInUser(email, password) {
+            return { userid, firstName, lastName, age, salary };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async signInUser({ email, password }) {
         try {
             const users = await new Promise((resolve, reject) => {
                 const query = "SELECT * FROM users WHERE email = ?;";
@@ -124,22 +125,14 @@ class DbService{
             }
 
             const user = users[0];
-            const match = await bcrypt.compare(password, user.password_hash);
+            // Compare password directly or with bcrypt
+            const match = (password === user.password_hash) || await bcrypt.compare(password, user.password_hash);
 
             if (!match) {
                 return { success: false, message: "Invalid email or password" };
             }
 
-            // Update last_login timestamp
-            await new Promise((resolve, reject) => {
-                const updateQuery = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE userid = ?;";
-                connection.query(updateQuery, [user.userid], (err, result) => {
-                    if(err) reject(new Error(err.message));
-                    else resolve(result);
-                });
-            });
-
-            return { success: true, message: "Sign-in successful", userid: user.userid, email: user.email };
+            return { success: true, message: "Sign-in successful", userid: user.userid };
         } catch(error) {
             console.log(error);
             throw error;
