@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anna Johnson Flooring Sales &amp; Installation</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Anna Johnson Flooring Sales &amp; Installation</h1>
+      <p>Catalog, Project Requests, Quotes &amp; Billing</p>
+    </div>
+    <div>
+      <button id="roleClientBtn" type="button">Client View</button>
+      <button id="roleContractorBtn" type="button">Contractor View</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="catalog">Catalog</button>
+    <button class="tab-btn" data-tab="request">Project Request</button>
+    <button class="tab-btn" data-tab="quotes">Quotes</button>
+    <button class="tab-btn" data-tab="billing">Billing</button>
+  </nav>
+
+  <div id="statusMsg" class="status hidden"></div>
+
+  <!-- CATALOG TAB -->
+  <section id="tab-catalog" class="tab-panel active">
+    <div class="row-between">
+      <h2>Flooring Catalog</h2>
+      <button id="refreshCatalogBtn" type="button">Refresh</button>
+    </div>
+    <div id="catalogList" class="grid"></div>
+
+    <form id="addProductForm" class="card contractor-only hidden">
+      <h3>Add Flooring Material</h3>
+      <input type="text" id="prodName" placeholder="Product name (e.g., Oak Ridge LVP)" required />
+      <input type="text" id="prodCategory" placeholder="Category (e.g., LVP, Hardwood)" value="Luxury Vinyl Plank" />
+      <input type="number" step="0.01" id="prodPrice" placeholder="Price per sq ft" required />
+      <input type="number" step="0.01" id="prodBoxSqft" placeholder="Box sq ft" />
+      <input type="text" id="prodDimensions" placeholder="Dimensions (e.g., 7x48 in)" />
+      <input type="number" step="0.1" id="prodWaste" placeholder="Waste %" value="10" />
+      <button type="submit">Add Product</button>
+    </form>
+  </section>
+
+  <!-- PROJECT REQUEST TAB -->
+  <section id="tab-request" class="tab-panel">
+    <h2>Submit Flooring Project Request</h2>
+    <form id="requestForm" class="card">
+      <input type="number" id="reqClientId" placeholder="Client ID" required />
+      <input type="text" id="reqTitle" placeholder="Project title (e.g., Living Room & Kitchen)" required />
+      <input type="text" id="reqAddress" placeholder="Service address (e.g., 123 Oak St)" required />
+
+      <div class="row-between">
+        <strong>Rooms</strong>
+        <button type="button" id="addRoomBtn">+ Add Room</button>
+      </div>
+      <div id="roomsContainer">
+        <div class="room-row">
+          <input type="text" class="room-name" placeholder="Room name" value="Living Room" required />
+          <input type="number" step="0.1" class="room-len" placeholder="Length (ft)" required />
+          <input type="number" step="0.1" class="room-wid" placeholder="Width (ft)" required />
+        </div>
+      </div>
+
+      <label for="reqPhotos">Site Photos (up to 5)</label>
+      <input type="file" id="reqPhotos" accept="image/*" multiple />
+
+      <textarea id="reqNotes" placeholder="Notes about rooms, subfloor, or schedule"></textarea>
+      <button type="submit">Submit Request</button>
+    </form>
+
+    <h3>Submitted Requests</h3>
+    <div id="requestsList" class="grid"></div>
+  </section>
+
+  <!-- QUOTES TAB -->
+  <section id="tab-quotes" class="tab-panel">
+    <div class="row-between">
+      <h2>Quotes &amp; Negotiation</h2>
+      <button id="refreshQuotesBtn" type="button">Refresh</button>
+    </div>
+
+    <form id="createQuoteForm" class="card contractor-only hidden">
+      <h3>Generate Quote (Contractor)</h3>
+      <input type="number" id="quoteRequestId" placeholder="Request ID" required />
+      <input type="number" step="0.1" id="quoteWastePct" placeholder="Waste %" value="10" required />
+      <input type="number" step="0.01" id="quoteMaterialUnitPrice" placeholder="Material unit price ($/sq ft)" required />
+      <input type="text" id="quoteMaterialDesc" placeholder="Material description" value="Flooring Material" required />
+      <input type="number" step="0.01" id="quoteLaborCost" placeholder="Estimated labor cost ($)" required />
+      <input type="number" step="0.01" id="quoteOtherAdj" placeholder="Other charges / discounts ($)" value="0" />
+      <input type="text" id="quoteWindow" placeholder="Proposed installation window (e.g., Dec 1–5)" />
+      <textarea id="quoteNote" placeholder="Quote notes for client"></textarea>
+      <button type="submit">Create Quote Version</button>
+    </form>
+
+    <form id="negotiationForm" class="card">
+      <h3>Send Negotiation / Counterproposal Message</h3>
+      <input type="number" id="msgRequestId" placeholder="Request ID" required />
+      <select id="msgSenderType">
+        <option value="Client">Client</option>
+        <option value="Contractor">Contractor</option>
+      </select>
+      <input type="text" id="msgText" placeholder="Counterproposal or message..." required />
+      <button type="submit">Send Message</button>
+    </form>
+
+    <div id="quotesList" class="grid"></div>
+  </section>
+
+  <!-- BILLING TAB -->
+  <section id="tab-billing" class="tab-panel">
+    <div class="row-between">
+      <h2>Bills &amp; Payments</h2>
+      <button id="refreshBillsBtn" type="button">Refresh</button>
+    </div>
+
+    <form id="createBillForm" class="card contractor-only hidden">
+      <h3>Create Bill Version (Contractor)</h3>
+      <input type="number" id="billOrderId" placeholder="Order ID" required />
+      <input type="number" step="0.01" id="billAmount" placeholder="Total billed amount ($)" required />
+      <button type="submit">Generate Bill</button>
+    </form>
+
+    <form id="disputeForm" class="card">
+      <h3>Log Bill Dispute / Response</h3>
+      <input type="number" id="disputeBillId" placeholder="Bill ID" required />
+      <select id="disputeAuthorType">
+        <option value="Client">Client</option>
+        <option value="Contractor">Contractor</option>
+      </select>
+      <input type="text" id="disputeMessage" placeholder="Dispute details or contractor response..." required />
+      <button type="submit">Submit Dispute Note</button>
+    </form>
+
+    <form id="paymentForm" class="card">
+      <h3>Record Payment</h3>
+      <input type="number" id="payBillId" placeholder="Bill ID" required />
+      <input type="number" step="0.01" id="payAmount" placeholder="Amount paid ($)" required />
+      <input type="text" id="payMethod" placeholder="Payment method" value="Credit Card" />
+      <button type="submit">Pay Bill</button>
+    </form>
+
+    <div id="billsList" class="grid"></div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
