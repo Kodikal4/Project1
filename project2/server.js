@@ -1,43 +1,40 @@
-// server.js
-const express = require('express');
-const cors = require('cors');
-const db = require('./db');
-require('dotenv').config();
+const path = require("path");
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// 1. Global Middleware (MUST come before routes)
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// server.js updates
-const productRoutes = require('./productRoutes');
-const clientRoutes = require('./clientRoutes');
-const requestRoutes = require('./requestRoutes');
-const quoteRoutes = require('./quotes');
-const billingRoutes = require('./billing');
+// 2. Static Frontend & Uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Use __dirname if index.html, app.js, and styles.css are in the same folder as server.js
+// (or change to path.join(__dirname, "public") if you moved them into a public/ folder)
+app.use(express.static(path.join(__dirname, "../frontend")));
 
-app.use('/api', productRoutes);
-app.use('/api', clientRoutes);
-app.use('/api', requestRoutes);
-app.use('/api', quoteRoutes);
-app.use('/api', billingRoutes);
-
-// Serve static uploaded project photos folder
-app.use('/uploads', express.static('uploads'));
-
-// Health check route
-app.get('/', (req, res) => {
-    json_response = { status: 'Server is running', business: 'Anna Johnson Flooring Sales & Installation' };
-    res.json(json_response);
+// 3. Health Check & API Routes
+app.get("/api/health", (req, res) => {
+  res.json({ status: "Server is running", business: "Anna Johnson Flooring Sales & Installation" });
 });
 
-// Import and mount routes (as you build them out)
-// const requestRoutes = require('./routes/requestRoutes');
-// app.use('/api', requestRoutes);
+const productRoutes = require("./productRoutes");
+const clientRoutes = require("./clientRoutes");
+const requestRoutes = require("./requestRoutes");
+const quoteRoutes = require("./quotes");
+const billingRoutes = require("./billing");
+
+app.use("/api", productRoutes);
+app.use("/api", clientRoutes);
+app.use("/api", requestRoutes);
+app.use("/api", quoteRoutes);
+app.use("/api", billingRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
