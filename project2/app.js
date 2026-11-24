@@ -1,5 +1,5 @@
-const API_URL = "http://localhost:5000/api";
-const UPLOADS_URL = "http://localhost:5000/uploads";
+const API_URL = "/api";
+const UPLOADS_URL = "/uploads";
 let currentRole = "client";
 
 function showStatus(message, isError = false) {
